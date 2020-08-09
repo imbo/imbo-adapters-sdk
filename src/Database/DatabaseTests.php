@@ -14,7 +14,7 @@ use DateTime;
  */
 abstract class DatabaseTests extends TestCase {
     protected DatabaseInterface $adapter;
-    protected string $fixturesDir  = __DIR__ . '/../fixtures';
+    protected string $fixturesDir  = __DIR__ . '/../Fixtures';
 
     /**
      * Get the adapter to be tested
