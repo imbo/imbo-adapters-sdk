@@ -1,6 +1,6 @@
 # Imbo adapters SDK
 
-[![CI](https://github.com/imbo/imbo-mongodb-adapters/workflows/CI/badge.svg)](https://github.com/imbo/imbo-mongodb-adapters/actions?query=workflow%3ACI)
+[![CI](https://github.com/imbo/imbo-adapters-sdk/workflows/CI/badge.svg)](https://github.com/imbo/imbo-adapters-sdk/actions?query=workflow%3ACI)
 
 ## Installation
 
