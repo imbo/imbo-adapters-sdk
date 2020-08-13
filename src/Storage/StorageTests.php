@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 abstract class StorageTests extends TestCase {
     protected StorageInterface $adapter;
     protected string $user = 'user';
-    protected string $imageIdentifier = 'image identifier';
+    protected string $imageIdentifier = 'imageIdentifier';
     protected string $fixturesDir  = __DIR__ . '/../Fixtures';
     protected string $imageData;
 
