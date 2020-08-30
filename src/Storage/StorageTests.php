@@ -21,7 +21,7 @@ abstract class StorageTests extends TestCase {
      */
     abstract protected function getAdapter() : StorageInterface;
 
-    public function setUp() : void {
+    protected function setUp() : void {
         $this->imageData = (string) file_get_contents($this->fixturesDir . '/image.png');
         $this->adapter   = $this->getAdapter();
     }
