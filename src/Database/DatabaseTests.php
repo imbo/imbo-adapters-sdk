@@ -16,6 +16,7 @@ abstract class DatabaseTests extends TestCase
 {
     protected DatabaseInterface $adapter;
     protected string $fixturesDir  = __DIR__ . '/../Fixtures';
+    protected int $allowedTimestampDelta = 1;
 
     /**
      * Get the adapter to be tested
@@ -291,7 +292,7 @@ abstract class DatabaseTests extends TestCase
         $this->assertEqualsWithDelta(
             (new DateTime($expectedDateTime))->getTimestamp(),
             $lastModified->getTimestamp(),
-            1,
+            $this->allowedTimestampDelta,
             'Incorrect DateTime value returned from getLastModified',
         );
     }
@@ -317,7 +318,7 @@ abstract class DatabaseTests extends TestCase
         $this->assertEqualsWithDelta(
             time(),
             $now->getTimestamp(),
-            1,
+            $this->allowedTimestampDelta,
             'Returned timestamp should be around now',
         );
 

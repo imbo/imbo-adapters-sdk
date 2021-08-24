@@ -14,6 +14,7 @@ abstract class StorageTests extends TestCase
     protected string $imageIdentifier = 'imageIdentifier';
     protected string $fixturesDir  = __DIR__ . '/../Fixtures';
     protected string $imageData;
+    protected int $allowedTimestampDelta = 1;
 
     /**
      * Get the adapter we want to test
@@ -109,7 +110,7 @@ abstract class StorageTests extends TestCase
         $this->assertEqualsWithDelta(
             time(),
             $lastModified->getTimestamp(),
-            1,
+            $this->allowedTimestampDelta,
             'Last modification should be around now',
         );
     }
