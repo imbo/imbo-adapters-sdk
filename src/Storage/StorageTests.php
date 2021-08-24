@@ -7,7 +7,8 @@ use PHPUnit\Framework\TestCase;
 /**
  * Base test case for database adapters
  */
-abstract class StorageTests extends TestCase {
+abstract class StorageTests extends TestCase
+{
     protected StorageInterface $adapter;
     protected string $user = 'user';
     protected string $imageIdentifier = 'imageIdentifier';
@@ -19,9 +20,10 @@ abstract class StorageTests extends TestCase {
      *
      * @return StorageInterface
      */
-    abstract protected function getAdapter() : StorageInterface;
+    abstract protected function getAdapter(): StorageInterface;
 
-    protected function setUp() : void {
+    protected function setUp(): void
+    {
         $this->imageData = (string) file_get_contents($this->fixturesDir . '/image.png');
         $this->adapter   = $this->getAdapter();
     }
@@ -29,7 +31,8 @@ abstract class StorageTests extends TestCase {
     /**
      * @covers ::store
      */
-    public function testStoreAndGetImage() : void {
+    public function testStoreAndGetImage(): void
+    {
         $this->assertTrue(
             $this->adapter->store($this->user, $this->imageIdentifier, $this->imageData),
             'Could not store initial image',
@@ -47,7 +50,8 @@ abstract class StorageTests extends TestCase {
      * @covers ::delete
      * @covers ::getImage
      */
-    public function testStoreDeleteAndGetImage() : void {
+    public function testStoreDeleteAndGetImage(): void
+    {
         $this->assertTrue(
             $this->adapter->store($this->user, $this->imageIdentifier, $this->imageData),
             'Could not store initial image',
@@ -65,7 +69,8 @@ abstract class StorageTests extends TestCase {
     /**
      * @covers ::delete
      */
-    public function testDeleteImageThatDoesNotExist() : void {
+    public function testDeleteImageThatDoesNotExist(): void
+    {
         $this->expectExceptionObject(new StorageException('File not found', 404));
         $this->adapter->delete($this->user, $this->imageIdentifier);
     }
@@ -73,7 +78,8 @@ abstract class StorageTests extends TestCase {
     /**
      * @covers ::getImage
      */
-    public function testGetImageThatDoesNotExist() : void {
+    public function testGetImageThatDoesNotExist(): void
+    {
         $this->expectExceptionObject(new StorageException('File not found', 404));
         $this->adapter->getImage($this->user, $this->imageIdentifier);
     }
@@ -81,7 +87,8 @@ abstract class StorageTests extends TestCase {
     /**
      * @covers ::getLastModified
      */
-    public function testGetLastModifiedOfImageThatDoesNotExist() : void {
+    public function testGetLastModifiedOfImageThatDoesNotExist(): void
+    {
         $this->expectExceptionObject(new StorageException('File not found', 404));
         $this->adapter->getLastModified($this->user, $this->imageIdentifier);
     }
@@ -90,7 +97,8 @@ abstract class StorageTests extends TestCase {
      * @covers ::store
      * @covers ::getLastModified
      */
-    public function testGetLastModified() : void {
+    public function testGetLastModified(): void
+    {
         $this->assertTrue(
             $this->adapter->store($this->user, $this->imageIdentifier, $this->imageData),
             'Could not store initial image',
@@ -110,7 +118,8 @@ abstract class StorageTests extends TestCase {
      * @covers ::imageExists
      * @covers ::store
      */
-    public function testCanCheckIfImageAlreadyExists() : void {
+    public function testCanCheckIfImageAlreadyExists(): void
+    {
         $this->assertFalse(
             $this->adapter->imageExists($this->user, $this->imageIdentifier),
             'Image is not supposed to exist',
