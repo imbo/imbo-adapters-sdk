@@ -1044,7 +1044,7 @@ abstract class DatabaseTests extends TestCase {
             $id,
             sprintf(
                 'Incorrect short URL ID. Expected "%s", got "%s"',
-                (string) $shortUrlId,
+                $shortUrlId,
                 (string) $id,
             ),
         );
@@ -1773,8 +1773,8 @@ abstract class DatabaseTests extends TestCase {
             $imageIdentifier = (string) md5_file($path);
 
             /** @var array{0: int, 1: int, mime: string} */
-            $info            = getimagesize($path);
-            $user            = 'user';
+            $info = getimagesize($path);
+            $user = 'user';
 
             if ($alternateUser && $i % 2 === 0) {
                 $user = 'user2';
@@ -1783,8 +1783,8 @@ abstract class DatabaseTests extends TestCase {
             $image = (new Image())
                 ->setMimeType($info['mime'])
                 ->setExtension(substr($fileName, (int) strrpos($fileName, '.') + 1))
-                ->setWidth((int) $info[0])
-                ->setHeight((int) $info[1])
+                ->setWidth($info[0])
+                ->setHeight($info[1])
                 ->setBlob((string) file_get_contents($path))
                 ->setAddedDate(new DateTime('@' . $now))
                 ->setUpdatedDate(new DateTime('@' . $now))

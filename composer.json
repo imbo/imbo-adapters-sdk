@@ -21,11 +21,8 @@
   "require-dev": {
     "imbo/imbo": "dev-develop",
     "phpunit/phpunit": "^9.3",
-    "phpstan/phpstan": "^0.12",
-    "phpstan/phpstan-phpunit": "^0.12",
-    "phpstan/extension-installer": "^1.0",
-    "vimeo/psalm": "^3.12",
-    "psalm/plugin-phpunit": "^0.10"
+    "vimeo/psalm": "^4.9",
+    "psalm/plugin-phpunit": "^0.16.1"
   },
   "autoload": {
     "psr-4": {
@@ -33,15 +30,8 @@
     }
   },
   "scripts": {
-    "lint": "for file in `git ls-files '*php'`; do php -l $file; done",
-    "sa:phpstan": "vendor/bin/phpstan analyse",
-    "sa:psalm": "vendor/bin/psalm",
-    "sa": [
-      "@sa:phpstan",
-      "@sa:psalm"
-    ],
+    "sa": "vendor/bin/psalm",
     "ci": [
-      "@lint",
       "@sa"
     ]
   }
