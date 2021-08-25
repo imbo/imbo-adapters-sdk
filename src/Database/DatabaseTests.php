@@ -80,13 +80,13 @@ abstract class DatabaseTests extends TestCase
 
         $this->assertTrue(
             $this->adapter->insertImage($user, $imageIdentifier, $this->getImageModel('image.jpg')),
-            'Unable to insert image'
+            'Unable to insert image',
         );
 
         $image = new Image();
         $this->assertTrue(
             $this->adapter->load($user, $imageIdentifier, $image),
-            'Unable to load image'
+            'Unable to load image',
         );
 
         $this->assertSame(665, $image->getWidth(), 'Image width is incorrect');
@@ -128,12 +128,12 @@ abstract class DatabaseTests extends TestCase
 
         $this->assertTrue(
             $this->adapter->insertImage($user, $imageIdentifier, $image, false),
-            'Unable to insert image'
+            'Unable to insert image',
         );
 
         $this->expectExceptionObject(new DuplicateImageIdentifierException(
             'Duplicate image identifier when attempting to insert image into DB.',
-            503
+            503,
         ));
 
         $this->adapter->insertImage($user, $imageIdentifier, $image, false);
@@ -153,7 +153,7 @@ abstract class DatabaseTests extends TestCase
         );
         $this->assertTrue(
             $this->adapter->insertImage('user', 'id', $this->getImageModel()),
-            'Unable to insert image'
+            'Unable to insert image',
         );
         $this->assertTrue(
             $this->adapter->imageExists('user', 'id'),
@@ -161,7 +161,7 @@ abstract class DatabaseTests extends TestCase
         );
         $this->assertTrue(
             $this->adapter->deleteImage('user', 'id'),
-            'Unable to delete image'
+            'Unable to delete image',
         );
         $this->assertFalse(
             $this->adapter->imageExists('user', 'id'),
@@ -333,7 +333,7 @@ abstract class DatabaseTests extends TestCase
 
         $this->assertTrue(
             $this->adapter->insertImage($user, $imageIdentifier, $original),
-            'Unable to insert image'
+            'Unable to insert image',
         );
 
         $now = $this->adapter->setLastModifiedNow($user, $imageIdentifier);
@@ -389,7 +389,7 @@ abstract class DatabaseTests extends TestCase
 
         $this->assertTrue(
             $this->adapter->insertImage($user, $imageIdentifier, $this->getImageModel()),
-            'Unable to insert image'
+            'Unable to insert image',
         );
 
         $desired  = new DateTime('@' . (time() + 10));
@@ -508,7 +508,7 @@ abstract class DatabaseTests extends TestCase
         $this->assertSame(
             3,
             $num,
-            sprintf('Expected 3 images, got %d', $num)
+            sprintf('Expected 3 images, got %d', $num),
         );
     }
 
@@ -537,7 +537,7 @@ abstract class DatabaseTests extends TestCase
         $this->assertSame(
             [],
             $this->adapter->getMetadata($user, $imageIdentifier),
-            'Expected metadata to be empty'
+            'Expected metadata to be empty',
         );
     }
 
@@ -574,7 +574,7 @@ abstract class DatabaseTests extends TestCase
         $this->assertSame(
             ['foo' => 'foo', 'bar' => 'foo'],
             $this->adapter->getMetadata($user, $imageIdentifier),
-            'Metadata is incorrect'
+            'Metadata is incorrect',
         );
     }
 
@@ -955,14 +955,14 @@ abstract class DatabaseTests extends TestCase
         $this->assertCount(
             $num,
             $images,
-            sprintf('Expected %d images, got %d', $num, count($images))
+            sprintf('Expected %d images, got %d', $num, count($images)),
         );
 
         foreach ($images as $i => $image) {
             $this->assertSame(
                 $imageIdentifiers[$i],
                 $image['imageIdentifier'],
-                'Incorrect image identifier'
+                'Incorrect image identifier',
             );
         }
     }
@@ -990,7 +990,7 @@ abstract class DatabaseTests extends TestCase
         $this->assertSame(
             'image/png',
             $mimeType,
-            sprintf('Incorrect mime type. Expected image/png, got %s', $mimeType)
+            sprintf('Incorrect mime type. Expected image/png, got %s', $mimeType),
         );
 
         $mimeType = $this->adapter->getImageMimeType($user, md5((string) $images[1]->getBlob()));
@@ -998,7 +998,7 @@ abstract class DatabaseTests extends TestCase
         $this->assertSame(
             'image/jpeg',
             $mimeType,
-            sprintf('Incorrect mime type. Expected image/jpeg, got %s', $mimeType)
+            sprintf('Incorrect mime type. Expected image/jpeg, got %s', $mimeType),
         );
     }
 
@@ -1135,7 +1135,7 @@ abstract class DatabaseTests extends TestCase
 
         $this->assertNull(
             $this->adapter->getShortUrlParams($shortUrlId),
-            'Did not expect to get short URL params'
+            'Did not expect to get short URL params',
         );
     }
 
@@ -1358,7 +1358,7 @@ abstract class DatabaseTests extends TestCase
         $this->assertCount(
             0,
             $images,
-            sprintf('Expected 0 images, got %d', count($images))
+            sprintf('Expected 0 images, got %d', count($images)),
         );
 
         $num = $model->getHits();
@@ -1578,7 +1578,7 @@ abstract class DatabaseTests extends TestCase
         $this->assertSame(
             6,
             $num,
-            sprintf('Expected model to have 6 hits, got %d', $num)
+            sprintf('Expected model to have 6 hits, got %d', $num),
         );
     }
 
@@ -1592,7 +1592,7 @@ abstract class DatabaseTests extends TestCase
         $this->assertSame(
             0,
             $num,
-            sprintf('Expected 0 bytes, got %d', $num)
+            sprintf('Expected 0 bytes, got %d', $num),
         );
 
         $this->assertTrue(
