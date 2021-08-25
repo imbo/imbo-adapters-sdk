@@ -3,3 +3,5 @@ vendor
 phpunit.xml
 .psalm
 .php-cs-fixer.cache
+.vscode
+
