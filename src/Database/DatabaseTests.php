@@ -71,6 +71,7 @@ abstract class DatabaseTests extends TestCase
     /**
      * @covers ::insertImage
      * @covers ::load
+     * @covers ::getImageProperties
      */
     public function testCanInsertAndGetImage(): void
     {
@@ -93,6 +94,27 @@ abstract class DatabaseTests extends TestCase
         $this->assertSame('image/jpeg', $image->getMimeType(), 'Image mime type is incorrect');
         $this->assertSame(64828, $image->getFilesize(), 'Image filesize is incorrect');
         $this->assertSame('jpg', $image->getExtension(), 'Image extension is incorrect');
+
+        $properties = $this->adapter->getImageProperties($user, $imageIdentifier);
+
+        foreach (['size', 'extension', 'mime', 'added', 'updated', 'width', 'height'] as $requiredKey) {
+            $this->assertArrayHasKey(
+                $requiredKey,
+                $properties,
+                sprintf(
+                    'Image properties is missing a required key: "%s"',
+                    $requiredKey,
+                ),
+            );
+        }
+
+        $this->assertSame(64828, $properties['size'], 'Incorrect size in image properties');
+        $this->assertSame('jpg', $properties['extension'], 'Incorrect extension in image properties');
+        $this->assertSame('image/jpeg', $properties['mime'], 'Incorrect mime in image properties');
+        $this->assertEqualsWithDelta(time(), $properties['added'], 2, 'Incorrect added timestamp in image properties');
+        $this->assertEqualsWithDelta(time(), $properties['updated'], 2, 'Incorrect updated timestamp in image properties');
+        $this->assertSame(665, $properties['width'], 'Incorrect size in image properties');
+        $this->assertSame(463, $properties['height'], 'Incorrect size in image properties');
     }
 
     /**
