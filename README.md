@@ -18,12 +18,15 @@ If you implement `Imbo\Database\DatabaseInterface`, you should include a test th
 <?php declare(strict_types=1);
 namespace Imbo\Database;
 
-class MyAdapterTest extends DatabaseTests {
-    protected function getAdapter() : MyAdapter {
+class MyAdapterTest extends DatabaseTests
+{
+    protected function getAdapter(): MyAdapter
+    {
         return new MyAdapter(/* ... */);
     }
 
-    public function setUp() : void {
+    public function setUp(): void
+    {
         // Remember to execute the parent setUp() method to initialize the adapter
         parent::setUp();
 
@@ -43,12 +46,15 @@ If you implement `Imbo\Storage\StorageInterface`, you should include a test that
 <?php declare(strict_types=1);
 namespace Imbo\Storage;
 
-class MyAdapterTest extends StorageTests {
-    protected function getAdapter() : MyAdapter {
+class MyAdapterTest extends StorageTests
+{
+    protected function getAdapter(): MyAdapter
+    {
         return new MyAdapter(/* ... */);
     }
 
-    public function setUp() : void {
+    public function setUp(): void
+    {
         // Remember to execute the parent setUp() method to initialize the adapter
         parent::setUp();
 
