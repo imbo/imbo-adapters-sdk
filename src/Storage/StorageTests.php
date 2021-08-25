@@ -136,4 +136,15 @@ abstract class StorageTests extends TestCase
             'Image does not exist',
         );
     }
+
+    /**
+     * @covers ::getStatus
+     */
+    public function testCanGetStatus(): void
+    {
+        $this->assertTrue(
+            $this->adapter->getStatus(),
+            'Expected status to be true',
+        );
+    }
 }
