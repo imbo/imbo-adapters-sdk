@@ -32,8 +32,10 @@
   },
   "scripts": {
     "sa": "vendor/bin/psalm",
+    "cs": "php-cs-fixer fix --dry-run --diff",
     "ci": [
-      "@sa"
+      "@sa",
+      "@cs"
     ]
   },
   "config": {
