@@ -679,12 +679,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/imbo/imbo.git",
-                "reference": "508c9bb81cebcff730803afe1f19f23926ae5430"
+                "reference": "f6add3db293d09fe0d791844cc61a2eaf069e1f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/imbo/imbo/zipball/508c9bb81cebcff730803afe1f19f23926ae5430",
-                "reference": "508c9bb81cebcff730803afe1f19f23926ae5430",
+                "url": "https://api.github.com/repos/imbo/imbo/zipball/f6add3db293d09fe0d791844cc61a2eaf069e1f2",
+                "reference": "f6add3db293d09fe0d791844cc61a2eaf069e1f2",
                 "shasum": ""
             },
             "require": {
@@ -699,8 +699,9 @@
                 "christeredvartsen/testfs": "^0.3.0",
                 "doctrine/dbal": "^2.10",
                 "ext-mongodb": "^1.6",
-                "imbo/behat-api-extension": "^2.2",
+                "imbo/behat-api-extension": "^3.0",
                 "imbo/imbo-filesystem-adapters": "dev-main",
+                "imbo/imbo-mongodb-adapters": "dev-main",
                 "micheh/psr7-cache": "^0.5",
                 "mongodb/mongodb": "^1.6",
                 "phpunit/phpunit": "^9.2"
@@ -754,7 +755,7 @@
                 "issues": "https://github.com/imbo/imbo/issues",
                 "source": "https://github.com/imbo/imbo"
             },
-            "time": "2021-08-25T16:21:31+00:00"
+            "time": "2021-08-30T07:30:11+00:00"
         },
         {
             "name": "imbo/imbo-coding-standard",
