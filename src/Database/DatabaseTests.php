@@ -25,7 +25,7 @@ abstract class DatabaseTests extends TestCase
      */
     abstract protected function getAdapter(): DatabaseInterface;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->adapter = $this->getAdapter();
     }
