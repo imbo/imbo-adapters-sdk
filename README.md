@@ -16,6 +16,7 @@ The following table shows which test case you will need to extend to test your i
 | ------------------ | -------------- |
 | `Imbo\Database\DatabaseTests` | `Imbo\Database\DatabaseInterface` |
 | `Imbo\Storage\StorageTests` | `Imbo\Storage\StorageInterface` |
+| `Imbo\EventListener\ImageVariations\Database\DatabaseTests` | `Imbo\EventListener\ImageVariations\Database\DatabaseInterface` |
 | `Imbo\EventListener\ImageVariations\Storage\StorageTests` | `Imbo\EventListener\ImageVariations\Storage\StorageInterface` |
 | `Imbo\Auth\AccessControl\Adapter\MutableAdapterTests` | `Imbo\Auth\AccessControl\Adapter\MutableAdapter` |
 
