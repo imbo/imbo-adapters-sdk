@@ -62,7 +62,12 @@ jobs:
     strategy:
       matrix:
         repo:
+          - imbo/imbo-b2-adapters
+          - imbo/imbo-filesystem-adapters
+          - imbo/imbo-mongodb-adapters
           - imbo/imbo-mysql-adapters
+          - imbo/imbo-postgresql-adapters
+          - imbo/imbo-s3-adapters
     runs-on: ubuntu-20.04
     steps:
       - name: Dispatch ${{ matrix.repo }}
