@@ -54,3 +54,20 @@ jobs:
 
       - name: Check coding standard
         run: php-cs-fixer fix --dry-run --diff
+
+  dispatch:
+    needs:
+      - ci
+    if: ${{ github.ref == 'refs/heads/main' }}
+    strategy:
+      matrix:
+        repo:
+          - imbo/imbo-mysql-adapters
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Dispatch ${{ matrix.repo }}
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          repository: ${{ matrix.repo }}
+          event-type: build
+          token: ${{ secrets.REPO_DISPATCH_PAT }}
