@@ -8,7 +8,6 @@ use Imbo\Exception\DuplicateImageIdentifierException;
 use Imbo\Model\Image;
 use Imbo\Model\Images;
 use Imbo\Resource\Images\Query;
-use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -1793,7 +1792,7 @@ abstract class DatabaseTests extends TestCase
         $query = new Query();
         $query->setSort(['foo:asc']);
 
-        $this->expectExceptionObject(new InvalidArgumentException(
+        $this->expectExceptionObject(new DatabaseException(
             'Invalid sort field: foo',
             400,
         ));
