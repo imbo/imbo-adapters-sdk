@@ -8,6 +8,7 @@ use Imbo\Exception\DuplicateImageIdentifierException;
 use Imbo\Model\Image;
 use Imbo\Model\Images;
 use Imbo\Resource\Images\Query;
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -70,6 +71,7 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
+     * @covers ::__construct
      * @covers ::insertImage
      * @covers ::load
      * @covers ::getImageProperties
@@ -116,6 +118,18 @@ abstract class DatabaseTests extends TestCase
         $this->assertEqualsWithDelta(time(), $properties['updated'], 2, 'Incorrect updated timestamp in image properties');
         $this->assertSame(665, $properties['width'], 'Incorrect size in image properties');
         $this->assertSame(463, $properties['height'], 'Incorrect size in image properties');
+    }
+
+    /**
+     * @covers ::getImageProperties
+     */
+    public function testGetImagePropertiesOfImageThatDoesNotExist(): void
+    {
+        $this->expectExceptionObject(new DatabaseException(
+            'Image not found',
+            404,
+        ));
+        $this->adapter->getImageProperties('user', 'image-id');
     }
 
     /**
@@ -972,6 +986,22 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
+     * @covers ::getImages
+     */
+    public function testPageIsNotAllowedWithoutLimitWhenGettingImages(): void
+    {
+        $query = new Query();
+        $query->setLimit(0);
+        $query->setPage(3);
+
+        $this->expectExceptionObject(new DatabaseException(
+            'page is not allowed without limit',
+            400,
+        ));
+        $this->adapter->getImages(['user'], $query, $this->createMock(Images::class));
+    }
+
+    /**
      * @covers ::getImageMimeType
      */
     public function testGetImageMimeType(): void
@@ -1756,6 +1786,21 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
+     * @covers ::getImages
+     */
+    public function testThrowsExceptionWhenSortingOnInvalidKey(): void
+    {
+        $query = new Query();
+        $query->setSort(['foo:asc']);
+
+        $this->expectExceptionObject(new InvalidArgumentException(
+            'Invalid sort field: foo',
+            400,
+        ));
+        $this->adapter->getImages(['user'], $query, $this->createMock(Images::class));
+    }
+
+    /**
      * @covers ::getStatus
      */
     public function testCanGetStatus(): void
@@ -1820,6 +1865,42 @@ abstract class DatabaseTests extends TestCase
             $expectedUsers,
             $this->adapter->getAllUsers(),
             'Incorrect list of users',
+        );
+    }
+
+    /**
+     * @covers ::insertImage
+     */
+    public function testUpdatesImageIfDuplicate(): void
+    {
+        $image = (new Image())
+            ->setMimeType('image/png')
+            ->setExtension('png')
+            ->setWidth(665)
+            ->setHeight(463)
+            ->setBlob(file_get_contents($this->fixturesDir . '/image.png'))
+            ->setAddedDate(new DateTime('@1331852400'))
+            ->setUpdatedDate(new DateTime('@1331852400'))
+            ->setOriginalChecksum('929db9c5fc3099f7576f5655207eba47');
+
+        $this->assertTrue(
+            $this->adapter->insertImage('user', 'image-id', $image),
+            'Unable to add image',
+        );
+
+        $originalProperties = $this->adapter->getImageProperties('user', 'image-id');
+
+        $this->assertTrue(
+            $this->adapter->insertImage('user', 'image-id', $image),
+            'Unable to add image',
+        );
+
+        $updatedProperties = $this->adapter->getImageProperties('user', 'image-id');
+
+        $this->assertGreaterThan(
+            $originalProperties['updated'],
+            $updatedProperties['updated'],
+            'Updated timestamp should be greater than the original',
         );
     }
 
