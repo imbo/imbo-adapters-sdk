@@ -30,10 +30,17 @@
       "Imbo\\": "src/"
     }
   },
+  "autoload-dev": {
+    "psr-4": {
+      "Imbo\\": "tests/"
+    }
+  },
   "scripts": {
+    "test": "vendor/bin/phpunit",
     "sa": "vendor/bin/psalm",
     "cs": "php-cs-fixer fix --dry-run --diff",
     "ci": [
+      "@test",
       "@sa",
       "@cs"
     ]

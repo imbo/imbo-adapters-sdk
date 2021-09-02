@@ -9,7 +9,9 @@
 >
     <projectFiles>
         <directory name="src"/>
+        <directory name="tests"/>
         <ignoreFiles>
+            <file name="src/Constraint/MultidimensionalArrayIsEqual.php"/>
             <directory name="vendor"/>
         </ignoreFiles>
     </projectFiles>

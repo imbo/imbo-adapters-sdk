@@ -2,6 +2,7 @@
 namespace Imbo\Database;
 
 use DateTime;
+use Imbo\Constraint\MultidimensionalArrayIsEqual;
 use Imbo\Exception\DatabaseException;
 use Imbo\Exception\DuplicateImageIdentifierException;
 use Imbo\Model\Image;
@@ -571,7 +572,7 @@ abstract class DatabaseTests extends TestCase
             'Unable to update metadata',
         );
 
-        $this->assertSame(
+        $this->assertMultidimensionalArraysAreEqual(
             ['foo' => 'foo', 'bar' => 'foo'],
             $this->adapter->getMetadata($user, $imageIdentifier),
             'Metadata is incorrect',
@@ -620,7 +621,7 @@ abstract class DatabaseTests extends TestCase
             'Unable to update metadata',
         );
 
-        $this->assertSame(
+        $this->assertMultidimensionalArraysAreEqual(
             $metadata,
             $this->adapter->getMetadata($user, $imageIdentifier),
             'Metadata is incorrect',
@@ -680,9 +681,12 @@ abstract class DatabaseTests extends TestCase
             'Expected array to have exactly one image',
         );
 
-        $this->assertSame(
+        /** @var array<string,mixed> */
+        $imageMetadata = $images[0]['metadata'];
+
+        $this->assertMultidimensionalArraysAreEqual(
             $metadata,
-            $images[0]['metadata'],
+            $imageMetadata,
             'Metadata is incorrect',
         );
     }
@@ -1877,5 +1881,19 @@ abstract class DatabaseTests extends TestCase
         $end = $now - 1;
 
         return [$start, $end];
+    }
+
+    /**
+     * @param array $expected Expected array
+     * @param array $actual Actual array
+     * @param string $message Optional failure message
+     */
+    private function assertMultidimensionalArraysAreEqual(array $expected, array $actual, string $message = ''): void
+    {
+        static::assertThat(
+            $actual,
+            new MultidimensionalArrayIsEqual($expected),
+            $message,
+        );
     }
 }
