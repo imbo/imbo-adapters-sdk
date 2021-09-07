@@ -19,7 +19,7 @@
     "php": ">=7.4"
   },
   "require-dev": {
-    "imbo/imbo": "dev-develop",
+    "imbo/imbo": "dev-main",
     "imbo/imbo-coding-standard": "^2.0",
     "phpunit/phpunit": "^9.5",
     "psalm/plugin-phpunit": "^0.16.1",
