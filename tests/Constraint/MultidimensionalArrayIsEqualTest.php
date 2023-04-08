@@ -11,9 +11,53 @@ use RuntimeException;
 class MultidimensionalArrayIsEqualTest extends TestCase
 {
     /**
+     * @dataProvider getArrays
+     * @covers ::__construct
+     * @covers ::matches
+     * @covers ::getArrayDiff
+     */
+    public function testCanCompareArrays(array $expected, array $actual): void
+    {
+        $constraint = new MultidimensionalArrayIsEqual($expected);
+        $this->assertTrue($constraint->matches($actual));
+    }
+
+    /**
+     * @covers ::matches
+     */
+    public function testCanOnlyMatchArray(): void
+    {
+        $this->expectException(RuntimeException::class);
+        $constraint = new MultidimensionalArrayIsEqual([]);
+        $constraint->matches('some string');
+    }
+
+    /**
+     * @covers ::toString
+     */
+    public function testRendersErrorMessage(): void
+    {
+        $constraint = new MultidimensionalArrayIsEqual(['foo' => 'bar']);
+        $this->assertStringStartsWith('is the same as Array', $constraint->toString());
+    }
+
+    /**
+     * @dataProvider getArraysForFailure
+     * @covers ::getArrayDiff
+     * @covers ::additionalFailureDescription
+     */
+    public function testCanFail(array $expected, array $actual): void
+    {
+        $constraint = new MultidimensionalArrayIsEqual($expected);
+        $this->expectException(ExpectationFailedException::class);
+        $this->expectExceptionMessage('Array difference');
+        $constraint->evaluate($actual);
+    }
+
+    /**
      * @return array<string,array{expected:array,actual:array}>
      */
-    public function getArrays(): array
+    public static function getArrays(): array
     {
         return [
             'empty arrays' => [
@@ -56,40 +100,9 @@ class MultidimensionalArrayIsEqualTest extends TestCase
     }
 
     /**
-     * @dataProvider getArrays
-     * @covers ::__construct
-     * @covers ::matches
-     * @covers ::getArrayDiff
-     */
-    public function testCanCompareArrays(array $expected, array $actual): void
-    {
-        $constraint = new MultidimensionalArrayIsEqual($expected);
-        $this->assertTrue($constraint->matches($actual));
-    }
-
-    /**
-     * @covers ::matches
-     */
-    public function testCanOnlyMatchArray(): void
-    {
-        $this->expectException(RuntimeException::class);
-        $constraint = new MultidimensionalArrayIsEqual([]);
-        $constraint->matches('some string');
-    }
-
-    /**
-     * @covers ::toString
-     */
-    public function testRendersErrorMessage(): void
-    {
-        $constraint = new MultidimensionalArrayIsEqual(['foo' => 'bar']);
-        $this->assertStringStartsWith('is the same as Array', $constraint->toString());
-    }
-
-    /**
      * @return array<string,array{expected:array,actual:array}>
      */
-    public function getArraysForFailure(): array
+    public static function getArraysForFailure(): array
     {
         return [
             'missing keys' => [
@@ -116,18 +129,5 @@ class MultidimensionalArrayIsEqualTest extends TestCase
                 ],
             ],
         ];
-    }
-
-    /**
-     * @dataProvider getArraysForFailure
-     * @covers ::getArrayDiff
-     * @covers ::additionalFailureDescription
-     */
-    public function testCanFail(array $expected, array $actual): void
-    {
-        $constraint = new MultidimensionalArrayIsEqual($expected);
-        $this->expectException(ExpectationFailedException::class);
-        $this->expectExceptionMessage('Array difference');
-        $constraint->evaluate($actual);
     }
 }
