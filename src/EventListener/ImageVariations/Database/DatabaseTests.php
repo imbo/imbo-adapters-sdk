@@ -15,37 +15,6 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
-     * @return array<string,array{0:int,1:?array{width:int,height:int}}>
-     */
-    public function getVariationData(): array
-    {
-        return [
-            'image larger than all variations' => [
-                1000,
-                null,
-            ],
-            'pick the largest variation' => [
-                500, [
-                    'width' => 770,
-                    'height' => 564,
-                ],
-            ],
-            'pick the next largest variation' => [
-                385, [
-                    'width' => 385,
-                    'height' => 282,
-                ],
-            ],
-            'pick the smallest variation' => [
-                150, [
-                    'width' => 192,
-                    'height' => 140,
-                ],
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider getVariationData
      * @covers ::__construct
      * @covers ::storeImageVariationMetadata
@@ -141,5 +110,39 @@ abstract class DatabaseTests extends TestCase
 
         $this->assertTrue($this->adapter->deleteImageVariations('key', 'id'));
         $this->assertSame(null, $this->adapter->getBestMatch('key', 'id', 100));
+    }
+
+    /**
+     * @return array<string,array{imageWidth:int,bestMatch:?array{width:int,height:int}}>
+     */
+    public static function getVariationData(): array
+    {
+        return [
+            'image larger than all variations' => [
+                'imageWidth' => 1000,
+                'bestMatch' => null,
+            ],
+            'pick the largest variation' => [
+                'imageWidth' => 500,
+                'bestMatch' => [
+                    'width' => 770,
+                    'height' => 564,
+                ],
+            ],
+            'pick the next largest variation' => [
+                'imageWidth' => 385,
+                'bestMatch' => [
+                    'width' => 385,
+                    'height' => 282,
+                ],
+            ],
+            'pick the smallest variation' => [
+                'imageWidth' => 150,
+                'bestMatch' => [
+                    'width' => 192,
+                    'height' => 140,
+                ],
+            ],
+        ];
     }
 }

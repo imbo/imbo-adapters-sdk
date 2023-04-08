@@ -9,6 +9,7 @@ use Imbo\Model\Image;
 use Imbo\Model\Images;
 use Imbo\Resource\Images\Query;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 /**
  * Base test case for database adapters
@@ -16,13 +17,11 @@ use PHPUnit\Framework\TestCase;
 abstract class DatabaseTests extends TestCase
 {
     protected DatabaseInterface $adapter;
-    protected string $fixturesDir  = __DIR__ . '/../Fixtures';
+    protected static string $fixturesDir  = __DIR__ . '/../Fixtures';
     protected int $allowedTimestampDelta = 1;
 
     /**
      * Get the adapter to be tested
-     *
-     * @return DatabaseInterface
      */
     abstract protected function getAdapter(): DatabaseInterface;
 
@@ -35,16 +34,15 @@ abstract class DatabaseTests extends TestCase
      * Get an image model based on a file in the fixtures directory
      *
      * @param string $image One of the images in the fixtures directory
-     * @param int $added
-     * @param int $updated
+     * @throws RuntimeException
      * @return Image
      */
-    private function getImageModel(string $image = 'test-image.png', int $added = null, int $updated = null): Image
+    private static function getImageModel(string $image = 'test-image.png', int $added = null, int $updated = null): Image
     {
-        $file = $this->fixturesDir . '/' . $image;
+        $file = self::$fixturesDir . '/' . $image;
 
         if (!file_exists($file)) {
-            $this->fail(sprintf('Image files does not exist: %s', $file));
+            throw new RuntimeException(sprintf('Image files does not exist: %s', $file));
         }
 
         [$width, $height, $type] = getimagesize($file);
@@ -81,7 +79,7 @@ abstract class DatabaseTests extends TestCase
         $imageIdentifier = 'id';
 
         $this->assertTrue(
-            $this->adapter->insertImage($user, $imageIdentifier, $this->getImageModel('image.jpg')),
+            $this->adapter->insertImage($user, $imageIdentifier, self::getImageModel('image.jpg')),
             'Unable to insert image',
         );
 
@@ -138,7 +136,7 @@ abstract class DatabaseTests extends TestCase
     {
         $user            = 'user';
         $imageIdentifier = 'id';
-        $image           = $this->getImageModel();
+        $image           = self::getImageModel();
 
         $this->assertTrue(
             $this->adapter->insertImage($user, $imageIdentifier, $image, false),
@@ -166,7 +164,7 @@ abstract class DatabaseTests extends TestCase
             'Did not expect image to exist',
         );
         $this->assertTrue(
-            $this->adapter->insertImage('user', 'id', $this->getImageModel()),
+            $this->adapter->insertImage('user', 'id', self::getImageModel()),
             'Unable to insert image',
         );
         $this->assertTrue(
@@ -205,21 +203,6 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
-     * @return array<string, array<string, string[]>>
-     */
-    public function getUsers(): array
-    {
-        return [
-            'no users' => [
-                'users' => [],
-            ],
-            'multiple users' => [
-                'users' => ['user1', 'user2', 'user3'],
-            ],
-        ];
-    }
-
-    /**
      * @dataProvider getUsers
      * @covers ::getLastModified
      * @param string[] $users
@@ -241,10 +224,9 @@ abstract class DatabaseTests extends TestCase
      *   expectedDateTime: string
      * }>
      */
-    public function getDataForLastModificationTest(): array
+    public static function getDataForLastModificationTest(): array
     {
-        $image = $this
-            ->getImageModel('test-image.png', 1499234238, 1499234238)
+        $image = self::getImageModel('test-image.png', 1499234238, 1499234238)
             ->setUser('user')
             ->setImageIdentifier(uniqid());
         $image2 = clone $image;
@@ -343,7 +325,7 @@ abstract class DatabaseTests extends TestCase
         $user            = 'user';
         $imageIdentifier = 'id';
         $added           = time() - 10;
-        $original        = $this->getImageModel('test-image.png', $added, $added);
+        $original        = self::getImageModel('test-image.png', $added, $added);
 
         $this->assertTrue(
             $this->adapter->insertImage($user, $imageIdentifier, $original),
@@ -402,7 +384,7 @@ abstract class DatabaseTests extends TestCase
         $imageIdentifier = 'id';
 
         $this->assertTrue(
-            $this->adapter->insertImage($user, $imageIdentifier, $this->getImageModel()),
+            $this->adapter->insertImage($user, $imageIdentifier, self::getImageModel()),
             'Unable to insert image',
         );
 
@@ -454,7 +436,7 @@ abstract class DatabaseTests extends TestCase
     public function testGetNumImages(): void
     {
         $user  = 'user';
-        $image = $this->getImageModel();
+        $image = self::getImageModel();
         $num   = $this->adapter->getNumImages($user);
 
         $this->assertSame(
@@ -544,7 +526,7 @@ abstract class DatabaseTests extends TestCase
         $imageIdentifier = 'id';
 
         $this->assertTrue(
-            $this->adapter->insertImage($user, $imageIdentifier, $this->getImageModel()),
+            $this->adapter->insertImage($user, $imageIdentifier, self::getImageModel()),
             'Unable to insert image',
         );
 
@@ -565,7 +547,7 @@ abstract class DatabaseTests extends TestCase
         $imageIdentifier = 'id';
 
         $this->assertTrue(
-            $this->adapter->insertImage($user, $imageIdentifier, $this->getImageModel()),
+            $this->adapter->insertImage($user, $imageIdentifier, self::getImageModel()),
             'Unable to insert image',
         );
 
@@ -625,7 +607,7 @@ abstract class DatabaseTests extends TestCase
         ];
 
         $this->assertTrue(
-            $this->adapter->insertImage($user, $imageIdentifier, $this->getImageModel()),
+            $this->adapter->insertImage($user, $imageIdentifier, self::getImageModel()),
             'Unable to insert image',
         );
 
@@ -674,7 +656,7 @@ abstract class DatabaseTests extends TestCase
         ];
 
         $this->assertTrue(
-            $this->adapter->insertImage($user, $imageIdentifier, $this->getImageModel()),
+            $this->adapter->insertImage($user, $imageIdentifier, self::getImageModel()),
             'Unable to insert image',
         );
 
@@ -715,7 +697,7 @@ abstract class DatabaseTests extends TestCase
         $imageIdentifier = 'id';
 
         $this->assertTrue(
-            $this->adapter->insertImage($user, $imageIdentifier, $this->getImageModel()),
+            $this->adapter->insertImage($user, $imageIdentifier, self::getImageModel()),
             'Unable to insert image',
         );
 
@@ -884,9 +866,9 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
-     * @return array<string, array{page: ?int, limit: ?int, imageIdentifiers: string[]}>
+     * @return array<string,array{page:?int,limit:?int,imageIdentifiers:array<string>}>
      */
-    public function getPageAndLimit(): array
+    public static function getPageAndLimit(): array
     {
         return [
             'no page or limit' => [
@@ -944,7 +926,7 @@ abstract class DatabaseTests extends TestCase
     /**
      * @dataProvider getPageAndLimit
      * @covers ::getImages
-     * @param string[] $imageIdentifiers
+     * @param array<string> $imageIdentifiers
      */
     public function testGetImagesWithPageAndLimit(int $page = null, int $limit = null, array $imageIdentifiers): void
     {
@@ -1007,8 +989,8 @@ abstract class DatabaseTests extends TestCase
     {
         $user   = 'user';
         $images = [
-            $this->getImageModel('image.png'),
-            $this->getImageModel('image.jpg'),
+            self::getImageModel('image.png'),
+            self::getImageModel('image.jpg'),
         ];
 
         foreach ($images as $image) {
@@ -1047,11 +1029,11 @@ abstract class DatabaseTests extends TestCase
     /**
      * @return array<string, array{
      *   shortUrlId: string,
-     *   query?: array<string, string|string[]>,
+     *   query?: array<string, string|array<string>>,
      *   extension?: string
      * }>
      */
-    public function getShortUrlVariations(): array
+    public static function getShortUrlVariations(): array
     {
         return [
             'without query and extension' => [
@@ -1089,7 +1071,7 @@ abstract class DatabaseTests extends TestCase
      * @covers ::insertShortUrl
      * @covers ::getShortUrlParams
      * @covers ::getShortUrlId
-     * @param array<string, string|string[]> $query
+     * @param array<string,string|array<string>> $query
      */
     public function testCanInsertAndGetParametersForAShortUrl(string $shortUrlId, array $query = [], string $extension = null): void
     {
@@ -1227,7 +1209,7 @@ abstract class DatabaseTests extends TestCase
         $id1   = 'id1';
         $id2   = 'id2';
         $id3   = 'id3';
-        $image = $this->getImageModel();
+        $image = self::getImageModel();
 
         $this->assertTrue(
             $this->adapter->insertImage($user, $id1, $image),
@@ -1326,9 +1308,9 @@ abstract class DatabaseTests extends TestCase
         $id1    = 'id1';
         $id2    = 'id2';
         $id3    = 'id3';
-        $image1 = $this->getImageModel()->setChecksum('checksum1');
-        $image2 = $this->getImageModel()->setChecksum('checksum2');
-        $image3 = $this->getImageModel()->setChecksum('checksum3');
+        $image1 = self::getImageModel()->setChecksum('checksum1');
+        $image2 = self::getImageModel()->setChecksum('checksum2');
+        $image3 = self::getImageModel()->setChecksum('checksum3');
 
         // This is the same for all image objects above
         $originalChecksum = (string) $image1->getOriginalChecksum();
@@ -1466,9 +1448,9 @@ abstract class DatabaseTests extends TestCase
         $id1    = 'id1';
         $id2    = 'id2';
         $id3    = 'id3';
-        $image1 = $this->getImageModel()->setChecksum('checksum1');
-        $image2 = $this->getImageModel()->setChecksum('checksum2');
-        $image3 = $this->getImageModel()->setChecksum('checksum3');
+        $image1 = self::getImageModel()->setChecksum('checksum1');
+        $image2 = self::getImageModel()->setChecksum('checksum2');
+        $image3 = self::getImageModel()->setChecksum('checksum3');
 
         $this->assertTrue(
             $this->adapter->insertImage($user1, $id1, $image1),
@@ -1629,7 +1611,7 @@ abstract class DatabaseTests extends TestCase
         );
 
         $this->assertTrue(
-            $this->adapter->insertImage('user', 'id', $this->getImageModel()),
+            $this->adapter->insertImage('user', 'id', self::getImageModel()),
             'Unable to insert image',
         );
 
@@ -1642,7 +1624,7 @@ abstract class DatabaseTests extends TestCase
         );
 
         $this->assertTrue(
-            $this->adapter->insertImage('user2', 'id', $this->getImageModel()),
+            $this->adapter->insertImage('user2', 'id', self::getImageModel()),
             'Unable to insert image',
         );
 
@@ -1669,7 +1651,7 @@ abstract class DatabaseTests extends TestCase
     public function testCanGetNumberOfUsers(): void
     {
         $this->assertTrue(
-            $this->adapter->insertImage('user', 'id', $this->getImageModel()),
+            $this->adapter->insertImage('user', 'id', self::getImageModel()),
             'Unable to insert image',
         );
 
@@ -1682,7 +1664,7 @@ abstract class DatabaseTests extends TestCase
         );
 
         $this->assertTrue(
-            $this->adapter->insertImage('user2', 'id', $this->getImageModel()),
+            $this->adapter->insertImage('user2', 'id', self::getImageModel()),
             'Unable to insert image',
         );
 
@@ -1696,9 +1678,9 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
-     * @return array<string, array{sort: string[], field: string, values: int[]|string[]}>
+     * @return array<string,array{sort:array<string>,field:string,values:array<int>|array<string>}>
      */
-    public function getSortData(): array
+    public static function getSortData(): array
     {
         return [
             'no sorting' => [
@@ -1755,8 +1737,8 @@ abstract class DatabaseTests extends TestCase
     /**
      * @dataProvider getSortData
      * @covers ::getImages
-     * @param string[] $sort
-     * @param string[]|int[] $values
+     * @param array<string> $sort
+     * @param array<string>|array<int> $values
      */
     public function testCanSortImages(array $sort, string $field, array $values): void
     {
@@ -1811,11 +1793,11 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
-     * @return array<string, array{images: Image[], expectedUsers: string[]}>
+     * @return array<string,array{images:array<Image>,expectedUsers:array<string>}>
      */
-    public function getDataForAllUsers(): array
+    public static function getDataForAllUsers(): array
     {
-        $image  = $this->getImageModel();
+        $image  = self::getImageModel();
         $image2 = clone $image;
         $image3 = clone $image;
         $image4 = clone $image;
@@ -1877,7 +1859,7 @@ abstract class DatabaseTests extends TestCase
             ->setExtension('png')
             ->setWidth(665)
             ->setHeight(463)
-            ->setBlob(file_get_contents($this->fixturesDir . '/image.png'))
+            ->setBlob(file_get_contents(self::$fixturesDir . '/image.png'))
             ->setAddedDate(new DateTime('@1331852400'))
             ->setUpdatedDate(new DateTime('@1331852400'))
             ->setOriginalChecksum('929db9c5fc3099f7576f5655207eba47');
@@ -1921,7 +1903,7 @@ abstract class DatabaseTests extends TestCase
         $start = $now;
 
         foreach (['image.jpg', 'image.png', 'image1.png', 'image2.png', 'image3.png', 'image4.png'] as $i => $fileName) {
-            $path            = $this->fixturesDir . '/' . $fileName;
+            $path            = self::$fixturesDir . '/' . $fileName;
             $imageIdentifier = (string) md5_file($path);
 
             /** @var array{0: int, 1: int, mime: string} */
@@ -1975,5 +1957,20 @@ abstract class DatabaseTests extends TestCase
             new MultidimensionalArrayIsEqual($expected),
             $message,
         );
+    }
+
+    /**
+     * @return array<string,array{users:array<string>}>
+     */
+    public static function getUsers(): array
+    {
+        return [
+            'no users' => [
+                'users' => [],
+            ],
+            'multiple users' => [
+                'users' => ['user1', 'user2', 'user3'],
+            ],
+        ];
     }
 }
