@@ -51,7 +51,7 @@ jobs:
         run: vendor/bin/phpunit
 
       - name: Run static code analysis
-        run: vendor/bin/psalm
+        run: vendor/bin/phpstan analyse
 
       - name: Check coding standard
         run: PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix --dry-run --diff
