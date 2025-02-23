@@ -4,4 +4,4 @@ phpunit.xml
 .psalm
 .php-cs-fixer.cache
 .vscode
-.phpunit.cache
+.phpunit.result.cache

@@ -10,8 +10,6 @@ abstract class StorageTests extends TestCase
 
     /**
      * Get the adapter we want to test
-     *
-     * @return StorageInterface
      */
     abstract protected function getAdapter(): StorageInterface;
 
@@ -20,10 +18,6 @@ abstract class StorageTests extends TestCase
         $this->adapter = $this->getAdapter();
     }
 
-    /**
-     * @covers ::getImageVariation
-     * @covers ::storeImageVariation
-     */
     public function testCanStoreAndGetImageVariations(): void
     {
         $key = 'key';
@@ -37,7 +31,7 @@ abstract class StorageTests extends TestCase
         );
 
         $this->assertTrue(
-            $this->adapter->storeImageVariation($key, $id, $blob, $width),
+            $this->adapter->storeImageVariation($key, $id, (string) $blob, $width),
             'Could not store image variation',
         );
 
@@ -48,11 +42,6 @@ abstract class StorageTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::storeImageVariation
-     * @covers ::getImageVariation
-     * @covers ::deleteImageVariations
-     */
     public function testCanDeleteOneOrMoreImageVariations(): void
     {
         $key = 'key';
@@ -60,7 +49,7 @@ abstract class StorageTests extends TestCase
         $blob = file_get_contents($this->fixturesDir . '/image.jpg');
 
         $this->assertTrue(
-            $this->adapter->storeImageVariation($key, $id, $blob, 100),
+            $this->adapter->storeImageVariation($key, $id, (string) $blob, 100),
             'Could not store 1st image variation',
         );
 

@@ -18,8 +18,6 @@ abstract class StorageTests extends TestCase
 
     /**
      * Get the adapter we want to test
-     *
-     * @return StorageInterface
      */
     abstract protected function getAdapter(): StorageInterface;
 
@@ -29,9 +27,6 @@ abstract class StorageTests extends TestCase
         $this->adapter   = $this->getAdapter();
     }
 
-    /**
-     * @covers ::store
-     */
     public function testStoreAndGetImage(): void
     {
         $this->assertTrue(
@@ -46,11 +41,6 @@ abstract class StorageTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::store
-     * @covers ::delete
-     * @covers ::getImage
-     */
     public function testStoreDeleteAndGetImage(): void
     {
         $this->assertTrue(
@@ -67,37 +57,24 @@ abstract class StorageTests extends TestCase
         $this->adapter->getImage($this->user, $this->imageIdentifier);
     }
 
-    /**
-     * @covers ::delete
-     */
     public function testDeleteImageThatDoesNotExist(): void
     {
         $this->expectExceptionObject(new StorageException('File not found', 404));
         $this->adapter->delete($this->user, $this->imageIdentifier);
     }
 
-    /**
-     * @covers ::getImage
-     */
     public function testGetImageThatDoesNotExist(): void
     {
         $this->expectExceptionObject(new StorageException('File not found', 404));
         $this->adapter->getImage($this->user, $this->imageIdentifier);
     }
 
-    /**
-     * @covers ::getLastModified
-     */
     public function testGetLastModifiedOfImageThatDoesNotExist(): void
     {
         $this->expectExceptionObject(new StorageException('File not found', 404));
         $this->adapter->getLastModified($this->user, $this->imageIdentifier);
     }
 
-    /**
-     * @covers ::store
-     * @covers ::getLastModified
-     */
     public function testGetLastModified(): void
     {
         $this->assertTrue(
@@ -115,10 +92,6 @@ abstract class StorageTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::imageExists
-     * @covers ::store
-     */
     public function testCanCheckIfImageAlreadyExists(): void
     {
         $this->assertFalse(
@@ -137,9 +110,6 @@ abstract class StorageTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::getStatus
-     */
     public function testCanGetStatus(): void
     {
         $this->assertTrue(

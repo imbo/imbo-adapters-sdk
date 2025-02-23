@@ -1,30 +1,26 @@
 <?php declare(strict_types=1);
 namespace Imbo\Constraint;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-/**
- * @coversDefaultClass Imbo\Constraint\MultidimensionalArrayIsEqual
- */
+#[CoversClass(MultidimensionalArrayIsEqual::class)]
 class MultidimensionalArrayIsEqualTest extends TestCase
 {
     /**
-     * @dataProvider getArrays
-     * @covers ::__construct
-     * @covers ::matches
-     * @covers ::getArrayDiff
+     * @param array<mixed> $expected
+     * @param array<mixed> $actual
      */
+    #[DataProvider('getArrays')]
     public function testCanCompareArrays(array $expected, array $actual): void
     {
         $constraint = new MultidimensionalArrayIsEqual($expected);
         $this->assertTrue($constraint->matches($actual));
     }
 
-    /**
-     * @covers ::matches
-     */
     public function testCanOnlyMatchArray(): void
     {
         $this->expectException(RuntimeException::class);
@@ -32,9 +28,6 @@ class MultidimensionalArrayIsEqualTest extends TestCase
         $constraint->matches('some string');
     }
 
-    /**
-     * @covers ::toString
-     */
     public function testRendersErrorMessage(): void
     {
         $constraint = new MultidimensionalArrayIsEqual(['foo' => 'bar']);
@@ -42,10 +35,10 @@ class MultidimensionalArrayIsEqualTest extends TestCase
     }
 
     /**
-     * @dataProvider getArraysForFailure
-     * @covers ::getArrayDiff
-     * @covers ::additionalFailureDescription
+     * @param array<mixed> $expected
+     * @param array<mixed> $actual
      */
+    #[DataProvider('getArraysForFailure')]
     public function testCanFail(array $expected, array $actual): void
     {
         $constraint = new MultidimensionalArrayIsEqual($expected);
@@ -55,7 +48,7 @@ class MultidimensionalArrayIsEqualTest extends TestCase
     }
 
     /**
-     * @return array<string,array{expected:array,actual:array}>
+     * @return array<string,array{expected:array<mixed>,actual:array<mixed>}>
      */
     public static function getArrays(): array
     {
@@ -100,7 +93,7 @@ class MultidimensionalArrayIsEqualTest extends TestCase
     }
 
     /**
-     * @return array<string,array{expected:array,actual:array}>
+     * @return array<string,array{expected:array<mixed>,actual:array<mixed>}>
      */
     public static function getArraysForFailure(): array
     {

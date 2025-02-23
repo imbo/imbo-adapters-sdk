@@ -2,12 +2,19 @@
 namespace Imbo\Constraint;
 
 use PHPUnit\Framework\Constraint\Constraint;
+use PHPUnit\Util\Exporter;
 use RuntimeException;
 
 class MultidimensionalArrayIsEqual extends Constraint
 {
+    /**
+     * @var array<mixed>
+     */
     private array $value;
 
+    /**
+     * @param array<mixed> $value
+     */
     public function __construct(array $value)
     {
         $this->value = $value;
@@ -15,9 +22,12 @@ class MultidimensionalArrayIsEqual extends Constraint
 
     public function toString(): string
     {
-        return 'is the same as ' . $this->exporter()->export($this->value);
+        return 'is the same as ' . Exporter::export($this->value);
     }
 
+    /**
+     * @param mixed $other
+     */
     public function matches($other): bool
     {
         if (!is_array($other)) {
@@ -27,6 +37,11 @@ class MultidimensionalArrayIsEqual extends Constraint
         return [] === $this->getArrayDiff($this->value, $other);
     }
 
+    /**
+     * @param array<mixed> $expected
+     * @param array<mixed> $actual
+     * @return array<mixed>
+     */
     private function getArrayDiff(array $expected, array $actual): array
     {
         $diff = [];
@@ -52,8 +67,11 @@ class MultidimensionalArrayIsEqual extends Constraint
         return $diff;
     }
 
+    /**
+     * @param array<mixed> $other
+     */
     protected function additionalFailureDescription($other): string
     {
-        return 'Array difference: ' . $this->exporter()->export($this->getArrayDiff($this->value, $other));
+        return 'Array difference: ' . Exporter::export($this->getArrayDiff($this->value, $other));
     }
 }

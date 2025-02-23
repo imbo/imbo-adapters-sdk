@@ -16,9 +16,6 @@ abstract class MutableAdapterTests extends TestCase
         $this->adapter = $this->getAdapter();
     }
 
-    /**
-     * @covers ::getGroups
-     */
     public function testReturnsEmptyArrayWhenThereIsNoGroups(): void
     {
         $model = $this->createMock(Groups::class);
@@ -27,12 +24,6 @@ abstract class MutableAdapterTests extends TestCase
         $this->assertSame([], $this->adapter->getGroups(new GroupQuery(), $model));
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::getGroup
-     * @covers ::addResourceGroup
-     * @covers ::getGroups
-     */
     public function testCanAddAndFetchGroups(): void
     {
         $this->assertNull($this->adapter->getGroup('g1'), 'Did not expect group to exist');
@@ -59,10 +50,6 @@ abstract class MutableAdapterTests extends TestCase
         $this->assertSame(['status.get'], $groups['g2']);
     }
 
-    /**
-     * @covers ::groupExists
-     * @covers ::addResourceGroup
-     */
     public function testCanCheckIfGroupExists(): void
     {
         $this->assertFalse($this->adapter->groupExists('g1'));
@@ -77,11 +64,6 @@ abstract class MutableAdapterTests extends TestCase
         $this->assertFalse($this->adapter->groupExists('g3'));
     }
 
-    /**
-     * @covers ::addResourceGroup
-     * @covers ::getGroup
-     * @covers ::updateResourceGroup
-     */
     public function testCanUpdateResourceGroup(): void
     {
         $this->adapter->addResourceGroup('g1', ['images.get', 'images.head']);
@@ -95,11 +77,6 @@ abstract class MutableAdapterTests extends TestCase
         $this->assertSame(['image.get'], $this->adapter->getGroup('g2')); // Has not changed
     }
 
-    /**
-     * @covers ::deleteResourceGroup
-     * @covers ::addResourceGroup
-     * @covers ::getGroup
-     */
     public function testCanRemoveGroup(): void
     {
         $this->assertFalse($this->adapter->deleteResourceGroup('g1'));
@@ -110,13 +87,6 @@ abstract class MutableAdapterTests extends TestCase
         $this->assertNull($this->adapter->getGroup('g1'));
     }
 
-    /**
-     * @covers ::publicKeyExists
-     * @covers ::getPrivateKey
-     * @covers ::updatePrivateKey
-     * @covers ::addKeyPair
-     * @covers ::deletePublicKey
-     */
     public function testCanManipulateKeys(): void
     {
         // Ensure the public key does not exist
@@ -151,20 +121,11 @@ abstract class MutableAdapterTests extends TestCase
         $this->assertNull($this->adapter->getPrivateKey('publicKey'));
     }
 
-    /**
-     * @covers ::getAccessRule
-     */
     public function testGetAccessRuleThatDoesNotExist(): void
     {
         $this->assertNull($this->adapter->getAccessRule('publickey', 'id'));
     }
 
-    /**
-     * @covers ::addKeyPair
-     * @covers ::addAccessRule
-     * @covers ::getAccessRule
-     * @covers ::deleteAccessRule
-     */
     public function testCanManipulateAccessRules(): void
     {
         $this->adapter->addKeyPair('public', 'private');
@@ -180,9 +141,6 @@ abstract class MutableAdapterTests extends TestCase
         $this->assertNull($this->adapter->getAccessRule('public', 'id-does-not-exist'));
     }
 
-    /**
-     * @covers ::getAccessListForPublicKey
-     */
     public function testCanGetAccessListForPublicKey(): void
     {
         $this->adapter->addKeyPair('public1', 'private1');

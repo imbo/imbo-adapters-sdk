@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace Imbo\EventListener\ImageVariations\Database;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 abstract class DatabaseTests extends TestCase
@@ -15,11 +16,9 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
-     * @dataProvider getVariationData
-     * @covers ::__construct
-     * @covers ::storeImageVariationMetadata
-     * @covers ::getBestMatch
+     * @param array<string,array{imageWidth:int,bestMatch:?array{width:int,height:int}}> $bestMatch
      */
+    #[DataProvider('getVariationData')]
     public function testCanFetchTheBestMatch(int $imageWidth, ?array $bestMatch): void
     {
         $variations = [
@@ -44,11 +43,6 @@ abstract class DatabaseTests extends TestCase
         $this->assertSame($bestMatch, $this->adapter->getBestMatch('key', 'id', $imageWidth));
     }
 
-    /**
-     * @covers ::storeImageVariationMetadata
-     * @covers ::getBestMatch
-     * @covers ::deleteImageVariations
-     */
     public function testCanDeleteOneOrMoreVariations(): void
     {
         $variations = [
@@ -79,14 +73,9 @@ abstract class DatabaseTests extends TestCase
         $this->assertSame($variations[0], $this->adapter->getBestMatch('key', 'id', 100));
         $this->adapter->deleteImageVariations('key', 'id', 770);
 
-        $this->assertSame(null, $this->adapter->getBestMatch('key', 'id', 100));
+        $this->assertNull($this->adapter->getBestMatch('key', 'id', 100));
     }
 
-    /**
-     * @covers ::storeImageVariationMetadata
-     * @covers ::deleteImageVariations
-     * @covers ::getBestMatch
-     */
     public function testCanDeleteAllTransformations(): void
     {
         $variations = [
@@ -109,7 +98,7 @@ abstract class DatabaseTests extends TestCase
         }
 
         $this->assertTrue($this->adapter->deleteImageVariations('key', 'id'));
-        $this->assertSame(null, $this->adapter->getBestMatch('key', 'id', 100));
+        $this->assertNull($this->adapter->getBestMatch('key', 'id', 100));
     }
 
     /**

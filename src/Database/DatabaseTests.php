@@ -8,6 +8,7 @@ use Imbo\Exception\DuplicateImageIdentifierException;
 use Imbo\Model\Image;
 use Imbo\Model\Images;
 use Imbo\Resource\Images\Query;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
@@ -45,7 +46,11 @@ abstract class DatabaseTests extends TestCase
             throw new RuntimeException(sprintf('Image files does not exist: %s', $file));
         }
 
-        [$width, $height, $type] = getimagesize($file);
+        if (false === ($size = getimagesize($file))) {
+            throw new RuntimeException(sprintf('Unable to get image size for: %s', $file));
+        }
+
+        [$width, $height, $type] = $size;
 
         $image = (new Image())
             ->setBlob((string) file_get_contents($file))
@@ -67,12 +72,6 @@ abstract class DatabaseTests extends TestCase
         return $image;
     }
 
-    /**
-     * @covers ::__construct
-     * @covers ::insertImage
-     * @covers ::load
-     * @covers ::getImageProperties
-     */
     public function testCanInsertAndGetImage(): void
     {
         $user            = 'user';
@@ -117,9 +116,6 @@ abstract class DatabaseTests extends TestCase
         $this->assertSame(463, $properties['height'], 'Incorrect size in image properties');
     }
 
-    /**
-     * @covers ::getImageProperties
-     */
     public function testGetImagePropertiesOfImageThatDoesNotExist(): void
     {
         $this->expectExceptionObject(new DatabaseException(
@@ -129,9 +125,6 @@ abstract class DatabaseTests extends TestCase
         $this->adapter->getImageProperties('user', 'image-id');
     }
 
-    /**
-     * @covers ::insertImage
-     */
     public function testStoreSameImageTwiceWithoutUpdateIfDuplicate(): void
     {
         $user            = 'user';
@@ -151,12 +144,6 @@ abstract class DatabaseTests extends TestCase
         $this->adapter->insertImage($user, $imageIdentifier, $image, false);
     }
 
-    /**
-     * @covers ::insertImage
-     * @covers ::imageExists
-     * @covers ::deleteImage
-     * @covers ::load
-     */
     public function testCanDeleteImages(): void
     {
         $this->assertFalse(
@@ -184,18 +171,12 @@ abstract class DatabaseTests extends TestCase
         $this->adapter->load('user', 'id', $this->createMock(Image::class));
     }
 
-    /**
-     * @covers ::deleteImage
-     */
     public function testDeleteImageThatDoesNotExist(): void
     {
         $this->expectExceptionObject(new DatabaseException('Image not found', 404));
         $this->adapter->deleteImage('user', 'id');
     }
 
-    /**
-     * @covers ::load
-     */
     public function testLoadImageThatDoesNotExist(): void
     {
         $this->expectExceptionObject(new DatabaseException('Image not found', 404));
@@ -203,10 +184,9 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
-     * @dataProvider getUsers
-     * @covers ::getLastModified
-     * @param string[] $users
+     * @param array<string> $users
      */
+    #[DataProvider('getUsers')]
     public function testGetLastModifiedOfImageThatDoesNotExist(array $users): void
     {
         $this->expectExceptionObject(new DatabaseException('Image not found', 404));
@@ -288,13 +268,12 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
-     * @dataProvider getDataForLastModificationTest
-     * @covers ::getLastModified
-     * @param Image[] $images
-     * @param string[] $users
+     * @param array<Image> $images
+     * @param array<string> $users
      * @param string $imageIdentifier
      * @param string $expectedDateTime
      */
+    #[DataProvider('getDataForLastModificationTest')]
     public function testCanGetLastModifiedDate(array $images, array $users, ?string $imageIdentifier, string $expectedDateTime): void
     {
         foreach ($images as $image) {
@@ -315,11 +294,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::setLastModifiedNow
-     * @covers ::load
-     * @covers ::getLastModified
-     */
     public function testCanSetLastModifiedDateToNow(): void
     {
         $user            = 'user';
@@ -373,11 +347,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::setLastModifiedTime
-     * @covers ::load
-     * @covers ::getLastModified
-     */
     public function testCanSetLastModifiedDateToTimestamp(): void
     {
         $user            = 'user';
@@ -421,18 +390,12 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::setLastModifiedTime
-     */
     public function testCannotSetLastModifiedDateForMissingImage(): void
     {
         $this->expectExceptionObject(new DatabaseException('Image not found', 404));
         $this->adapter->setLastModifiedNow('user', 'id');
     }
 
-    /**
-     * @covers ::getNumImages
-     */
     public function testGetNumImages(): void
     {
         $user  = 'user';
@@ -508,18 +471,12 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::getMetadata
-     */
     public function testGetMetadataWhenImageDoesNotExist(): void
     {
         $this->expectExceptionObject(new DatabaseException('Image not found', 404));
         $this->adapter->getMetadata('user', 'id');
     }
 
-    /**
-     * @covers ::getMetadata
-     */
     public function testGetMetadataWhenImageHasNone(): void
     {
         $user            = 'user';
@@ -537,10 +494,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::getMetadata
-     * @covers ::updateMetadata
-     */
     public function testUpdateAndGetMetadata(): void
     {
         $user            = 'user';
@@ -574,10 +527,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::updateMetadata
-     * @covers ::getMetadata
-     */
     public function testMetadataWithNestedArraysIsRepresetedCorrectly(): void
     {
         $user            = 'user';
@@ -623,10 +572,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::updateMetadata
-     * @covers ::getImages
-     */
     public function testMetadataWithNestedArraysIsRepresetedCorrectlyWhenFetchingMultipleImages(): void
     {
         $user            = 'user';
@@ -686,11 +631,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::updateMetadata
-     * @covers ::getMetadata
-     * @covers ::deleteMetadata
-     */
     public function testUpdateDeleteAndGetMetadata(): void
     {
         $user            = 'user';
@@ -724,18 +664,12 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::deleteMetadata
-     */
     public function testDeleteMetataFromImageThatDoesNotExist(): void
     {
         $this->expectExceptionObject(new DatabaseException('Image not found', 404));
         $this->adapter->deleteMetadata('user', 'id');
     }
 
-    /**
-     * @covers ::getImages
-     */
     public function testGetImagesWithStartAndEndTimestamps(): void
     {
         [$start, $end] = $this->insertImages();
@@ -825,7 +759,6 @@ abstract class DatabaseTests extends TestCase
 
     /**
      * @see https://github.com/imbo/imbo/pull/491
-     * @covers ::getImages
      */
     public function testGetImagesAndReturnMetadata(): void
     {
@@ -924,10 +857,9 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
-     * @dataProvider getPageAndLimit
-     * @covers ::getImages
      * @param array<string> $imageIdentifiers
      */
+    #[DataProvider('getPageAndLimit')]
     public function testGetImagesWithPageAndLimit(int $page = null, int $limit = null, array $imageIdentifiers): void
     {
         $this->insertImages();
@@ -966,9 +898,6 @@ abstract class DatabaseTests extends TestCase
         }
     }
 
-    /**
-     * @covers ::getImages
-     */
     public function testPageIsNotAllowedWithoutLimitWhenGettingImages(): void
     {
         $query = new Query();
@@ -982,9 +911,6 @@ abstract class DatabaseTests extends TestCase
         $this->adapter->getImages(['user'], $query, $this->createMock(Images::class));
     }
 
-    /**
-     * @covers ::getImageMimeType
-     */
     public function testGetImageMimeType(): void
     {
         $user   = 'user';
@@ -1017,9 +943,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::getImageMimeType
-     */
     public function testGetMimeTypeWhenImageDoesNotExist(): void
     {
         $this->expectExceptionObject(new DatabaseException('Image not found', 404));
@@ -1067,12 +990,9 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
-     * @dataProvider getShortUrlVariations
-     * @covers ::insertShortUrl
-     * @covers ::getShortUrlParams
-     * @covers ::getShortUrlId
      * @param array<string,string|array<string>> $query
      */
+    #[DataProvider('getShortUrlVariations')]
     public function testCanInsertAndGetParametersForAShortUrl(string $shortUrlId, array $query = [], string $extension = null): void
     {
         $user            = 'user';
@@ -1119,19 +1039,11 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::getShortUrlId
-     */
     public function testCanGetShortUrlIdThatDoesNotExist(): void
     {
         $this->assertNull($this->adapter->getShortUrlId('user', 'image'));
     }
 
-    /**
-     * @covers ::insertShortUrl
-     * @covers ::deleteShortUrls
-     * @covers ::getShortUrlParams
-     */
     public function testCanDeleteShortUrls(): void
     {
         $shortUrlId      = 'aaaaaaa';
@@ -1154,11 +1066,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::insertShortUrl
-     * @covers ::deleteShortUrls
-     * @covers ::getShortUrlParams
-     */
     public function testCanDeleteASingleShortUrl(): void
     {
         $user            = 'user';
@@ -1200,9 +1107,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::getImages
-     */
     public function testCanFilterOnImageIdentifiers(): void
     {
         $user  = 'user';
@@ -1299,9 +1203,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::getImages
-     */
     public function testCanFilterOnChecksums(): void
     {
         $user   = 'user';
@@ -1436,10 +1337,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::insertImage
-     * @covers ::getImages
-     */
     public function testCanFilterImagesByUser(): void
     {
         $user1  = 'user1';
@@ -1597,9 +1494,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::getNumBytes
-     */
     public function testCanGetNumberOfBytes(): void
     {
         $num = $this->adapter->getNumBytes('user');
@@ -1645,9 +1539,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::getNumUsers
-     */
     public function testCanGetNumberOfUsers(): void
     {
         $this->assertTrue(
@@ -1735,11 +1626,10 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
-     * @dataProvider getSortData
-     * @covers ::getImages
      * @param array<string> $sort
      * @param array<string>|array<int> $values
      */
+    #[DataProvider('getSortData')]
     public function testCanSortImages(array $sort, string $field, array $values): void
     {
         $this->insertImages();
@@ -1766,9 +1656,6 @@ abstract class DatabaseTests extends TestCase
         }
     }
 
-    /**
-     * @covers ::getImages
-     */
     public function testThrowsExceptionWhenSortingOnInvalidKey(): void
     {
         $query = new Query();
@@ -1781,9 +1668,6 @@ abstract class DatabaseTests extends TestCase
         $this->adapter->getImages(['user'], $query, $this->createMock(Images::class));
     }
 
-    /**
-     * @covers ::getStatus
-     */
     public function testCanGetStatus(): void
     {
         $this->assertTrue(
@@ -1824,11 +1708,10 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
-     * @dataProvider getDataForAllUsers
-     * @covers ::getAllUsers
-     * @param Image[] $images
-     * @param string[] $expectedUsers
+     * @param array<Image> $images
+     * @param array<string> $expectedUsers
      */
+    #[DataProvider('getDataForAllUsers')]
     public function testCanGetAllUsers(array $images, array $expectedUsers): void
     {
         foreach ($images as $image) {
@@ -1849,9 +1732,6 @@ abstract class DatabaseTests extends TestCase
         );
     }
 
-    /**
-     * @covers ::insertImage
-     */
     public function testUpdatesImageIfDuplicate(): void
     {
         $image = (new Image())
@@ -1859,7 +1739,7 @@ abstract class DatabaseTests extends TestCase
             ->setExtension('png')
             ->setWidth(665)
             ->setHeight(463)
-            ->setBlob(file_get_contents(self::$fixturesDir . '/image.png'))
+            ->setBlob((string) file_get_contents(self::$fixturesDir . '/image.png'))
             ->setAddedDate(new DateTime('@1331852400'))
             ->setUpdatedDate(new DateTime('@1331852400'))
             ->setOriginalChecksum('929db9c5fc3099f7576f5655207eba47');
@@ -1906,8 +1786,10 @@ abstract class DatabaseTests extends TestCase
             $path            = self::$fixturesDir . '/' . $fileName;
             $imageIdentifier = (string) md5_file($path);
 
-            /** @var array{0: int, 1: int, mime: string} */
-            $info = getimagesize($path);
+            if (false === ($info = getimagesize($path))) {
+                throw new RuntimeException(sprintf('Unable to get image size for: %s', $path));
+            }
+
             $user = 'user';
 
             if ($alternateUser && $i % 2 === 0) {
@@ -1946,8 +1828,8 @@ abstract class DatabaseTests extends TestCase
     }
 
     /**
-     * @param array $expected Expected array
-     * @param array $actual Actual array
+     * @param array<mixed> $expected Expected array
+     * @param array<mixed> $actual Actual array
      * @param string $message Optional failure message
      */
     private function assertMultidimensionalArraysAreEqual(array $expected, array $actual, string $message = ''): void
