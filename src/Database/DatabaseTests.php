@@ -38,7 +38,7 @@ abstract class DatabaseTests extends TestCase
      * @throws RuntimeException
      * @return Image
      */
-    private static function getImageModel(string $image = 'test-image.png', int $added = null, int $updated = null): Image
+    private static function getImageModel(string $image = 'test-image.png', ?int $added = null, ?int $updated = null): Image
     {
         $file = self::$fixturesDir . '/' . $image;
 
@@ -860,17 +860,17 @@ abstract class DatabaseTests extends TestCase
      * @param array<string> $imageIdentifiers
      */
     #[DataProvider('getPageAndLimit')]
-    public function testGetImagesWithPageAndLimit(int $page = null, int $limit = null, array $imageIdentifiers): void
+    public function testGetImagesWithPageAndLimit(int $page, int $limit, array $imageIdentifiers): void
     {
         $this->insertImages();
 
         $query = new Query();
 
-        if (null !== $page) {
+        if (0 !== $page) {
             $query->setPage($page);
         }
 
-        if (null !== $limit) {
+        if (0 !== $limit) {
             $query->setLimit($limit);
         }
 
@@ -993,7 +993,7 @@ abstract class DatabaseTests extends TestCase
      * @param array<string,string|array<string>> $query
      */
     #[DataProvider('getShortUrlVariations')]
-    public function testCanInsertAndGetParametersForAShortUrl(string $shortUrlId, array $query = [], string $extension = null): void
+    public function testCanInsertAndGetParametersForAShortUrl(string $shortUrlId, array $query = [], ?string $extension = null): void
     {
         $user            = 'user';
         $imageIdentifier = 'id';

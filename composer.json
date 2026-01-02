@@ -2,7 +2,9 @@
   "name": "imbo/imbo-adapters-sdk",
   "type": "library",
   "description": "SDK for Imbo adapters",
-  "keywords": [ "imbo" ],
+  "keywords": [
+    "imbo"
+  ],
   "homepage": "https://imbo.io/",
   "license": "MIT",
   "authors": [
@@ -10,7 +12,8 @@
       "name": "Christer Edvartsen",
       "email": "cogo@starzinger.net",
       "homepage": "https://github.com/christeredvartsen"
-    }, {
+    },
+    {
       "name": "Contributors",
       "homepage": "https://github.com/imbo"
     }
@@ -19,13 +22,13 @@
     "php": ">=8.3"
   },
   "require-dev": {
-    "friendsofphp/php-cs-fixer": "^3.70",
+    "friendsofphp/php-cs-fixer": "^3.92",
     "imbo/imbo": "dev-main",
-    "imbo/imbo-coding-standard": "^2.0",
+    "imbo/imbo-coding-standard": "^2.1",
     "phpstan/extension-installer": "^1.4",
     "phpstan/phpstan": "^2.1",
     "phpstan/phpstan-phpunit": "^2.0",
-    "phpunit/phpunit": "^12.0"
+    "phpunit/phpunit": "^12.5"
   },
   "autoload": {
     "psr-4": {
@@ -40,10 +43,11 @@
   "scripts": {
     "test": "vendor/bin/phpunit",
     "sa": "vendor/bin/phpstan analyse",
-    "cs": "vendor/bin/php-cs-fixer fix --dry-run --diff",
+    "cs": "vendor/bin/php-cs-fixer check --diff",
+    "cs:fix": "vendor/bin/php-cs-fixer fix --diff",
     "ci": [
-      "@test",
       "@sa",
+      "@test",
       "@cs"
     ]
   },
