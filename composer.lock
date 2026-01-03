@@ -687,28 +687,28 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/imbo/imbo.git",
-                "reference": "915628550306834493b3eeb953416bb21e2935aa"
+                "reference": "d88c3c0feec56c6e19512085b115c48f02f0a378"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/imbo/imbo/zipball/915628550306834493b3eeb953416bb21e2935aa",
-                "reference": "915628550306834493b3eeb953416bb21e2935aa",
+                "url": "https://api.github.com/repos/imbo/imbo/zipball/d88c3c0feec56c6e19512085b115c48f02f0a378",
+                "reference": "d88c3c0feec56c6e19512085b115c48f02f0a378",
                 "shasum": ""
             },
             "require": {
                 "ext-imagick": "^3.7",
-                "guzzlehttp/psr7": "^2.0",
+                "guzzlehttp/psr7": "^2.8",
                 "php": ">=8.3",
-                "ramsey/uuid": "^4.2",
-                "symfony/console": "^7.2",
-                "symfony/http-foundation": "^7.2"
+                "ramsey/uuid": "^4.9",
+                "symfony/console": "^7.4",
+                "symfony/http-foundation": "^7.4"
             },
             "require-dev": {
-                "christeredvartsen/testfs": "^0.5.0",
-                "friendsofphp/php-cs-fixer": "^3.75",
+                "christeredvartsen/testfs": "^0.6",
+                "friendsofphp/php-cs-fixer": "^3.92",
                 "imbo/behat-api-extension": "^6.0",
                 "imbo/imbo-adapters-sdk": "dev-main",
-                "imbo/imbo-coding-standard": "^2.0",
+                "imbo/imbo-coding-standard": "^2.1",
                 "imbo/imbo-filesystem-adapters": "dev-main",
                 "imbo/imbo-mongodb-adapters": "dev-main",
                 "imbo/imbo-mysql-adapters": "dev-main",
@@ -718,8 +718,8 @@
                 "phpstan/phpstan": "^2.1",
                 "phpstan/phpstan-deprecation-rules": "^2.0",
                 "phpstan/phpstan-phpunit": "^2.0",
-                "phpunit/phpunit": "^12.1",
-                "symfony/var-dumper": "^7.2"
+                "phpunit/phpunit": "^12.5",
+                "symfony/var-dumper": "^7.4"
             },
             "suggest": {
                 "imbo/imbo-b2-adapters": "Enables usage of Backblaze B2 for storing images",
@@ -768,7 +768,7 @@
                 "issues": "https://github.com/imbo/imbo/issues",
                 "source": "https://github.com/imbo/imbo"
             },
-            "time": "2025-04-24T09:18:39+00:00"
+            "time": "2026-01-03T13:57:52+00:00"
         },
         {
             "name": "imbo/imbo-coding-standard",
