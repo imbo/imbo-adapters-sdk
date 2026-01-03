@@ -168,7 +168,7 @@ abstract class DatabaseTests extends TestCase
         );
 
         $this->expectExceptionObject(new DatabaseException('Image not found', 404));
-        $this->adapter->load('user', 'id', $this->createMock(Image::class));
+        $this->adapter->load('user', 'id', $this->createStub(Image::class));
     }
 
     public function testDeleteImageThatDoesNotExist(): void
@@ -180,7 +180,7 @@ abstract class DatabaseTests extends TestCase
     public function testLoadImageThatDoesNotExist(): void
     {
         $this->expectExceptionObject(new DatabaseException('Image not found', 404));
-        $this->adapter->load('user', 'id', $this->createMock(Image::class));
+        $this->adapter->load('user', 'id', $this->createStub(Image::class));
     }
 
     /**
@@ -767,7 +767,7 @@ abstract class DatabaseTests extends TestCase
         $query = new Query();
         $query->setReturnMetadata(true);
 
-        $images = $this->adapter->getImages(['user', 'user2'], $query, $this->createMock(Images::class));
+        $images = $this->adapter->getImages(['user', 'user2'], $query, $this->createStub(Images::class));
 
         $this->assertCount(
             6,
@@ -805,8 +805,8 @@ abstract class DatabaseTests extends TestCase
     {
         return [
             'no page or limit' => [
-                'page'             => null,
-                'limit'            => null,
+                'page'             => 0,
+                'limit'            => 0,
                 'imageIdentifiers' => [
                     'a501051db16e3cbf88ea50bfb0138a47',
                     '1d5b88aec8a3e1c4c57071307b2dae3a',
@@ -817,7 +817,7 @@ abstract class DatabaseTests extends TestCase
                 ],
             ],
             'no page, 2 images' => [
-                'page'             => null,
+                'page'             => 0,
                 'limit'            => 2,
                 'imageIdentifiers' => [
                     'a501051db16e3cbf88ea50bfb0138a47',
@@ -908,7 +908,7 @@ abstract class DatabaseTests extends TestCase
             'page is not allowed without limit',
             400,
         ));
-        $this->adapter->getImages(['user'], $query, $this->createMock(Images::class));
+        $this->adapter->getImages(['user'], $query, $this->createStub(Images::class));
     }
 
     public function testGetImageMimeType(): void
@@ -1640,7 +1640,7 @@ abstract class DatabaseTests extends TestCase
             $query->setSort($sort);
         }
 
-        $images = $this->adapter->getImages(['user'], $query, $this->createMock(Images::class));
+        $images = $this->adapter->getImages(['user'], $query, $this->createStub(Images::class));
 
         foreach ($images as $i => $image) {
             $this->assertSame(
@@ -1665,7 +1665,7 @@ abstract class DatabaseTests extends TestCase
             'Invalid sort field: foo',
             400,
         ));
-        $this->adapter->getImages(['user'], $query, $this->createMock(Images::class));
+        $this->adapter->getImages(['user'], $query, $this->createStub(Images::class));
     }
 
     public function testCanGetStatus(): void
